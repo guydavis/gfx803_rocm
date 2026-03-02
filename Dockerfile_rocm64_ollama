@@ -1,4 +1,4 @@
-# Docker Buildfile for ROCm 6.4 to use Ollama v0.15.1 with a RX5(x)0 / Polaris / gfx803 AMD GPU
+# Docker Buildfile for ROCm 6.4 to use Ollama v0.17.4 RX5(x)0 / Polaris / gfx803 AMD GPU
 # created, build and compiled by Robert Rosenbusch at May-April 2025
 # include llm-benchmnark and open-webui GUI
 
@@ -28,7 +28,7 @@ RUN if [[ $OLLAMA_WEBUI == "1" ]]; then echo "INSTALL OPEN-WEBUI";curl -LsSf htt
     true
 
 ## Checkout Ollama
-ENV OLLAMA_GIT_VERSION="v0.15.1"
+ENV OLLAMA_GIT_VERSION="v0.17.4"
 RUN echo "Checkout OLLAMA: ${OLLAMA_GIT_VERSION}" && \
     git clone https://github.com/ollama/ollama.git -b ${OLLAMA_GIT_VERSION} /ollama && \
     true
