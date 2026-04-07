@@ -1,4 +1,4 @@
-# Docker Buildfile for ROCm 6.4 to use Ollama v0.17.4 RX5(x)0 / Polaris / gfx803 AMD GPU
+# Docker Buildfile for ROCm 6.4 to use Ollama v0.20.2 RX5(x)0 / Polaris / gfx803 AMD GPU
 # created, build and compiled by Robert Rosenbusch at May-April 2025
 # include llm-benchmnark and open-webui GUI
 
@@ -28,13 +28,14 @@ RUN if [[ $OLLAMA_WEBUI == "1" ]]; then echo "INSTALL OPEN-WEBUI";curl -LsSf htt
     true
 
 ## Checkout Ollama
-ENV OLLAMA_GIT_VERSION="v0.17.4"
+ENV OLLAMA_GIT_VERSION="v0.20.2"
 RUN echo "Checkout OLLAMA: ${OLLAMA_GIT_VERSION}" && \
     git clone https://github.com/ollama/ollama.git -b ${OLLAMA_GIT_VERSION} /ollama && \
     true
 
 ## Replace gfx803 on Ollama    
 WORKDIR /ollama
+ENV PATH="${PATH}:/ollama"
 RUN echo "REPLACE Ollama Source for gfx803"  && \
     sed -i 's/var RocmComputeMajorMin = "9"/var RocmComputeMajorMin = "8"/' discover/gpu.go && \
     sed -i 's/find_package(hip REQUIRED)/#find_package(hip REQUIRED)/' CMakeLists.txt && \
@@ -56,6 +57,9 @@ RUN touch ol_serve.sh && \
     echo "./ollama serve" >> ol_serve.sh && \
     chmod +x ol_serve.sh && \
     true
+
+# Disable Flash Attention so that Qwen3.5 doesn't output garbled text when prompted.
+ENV OLLAMA_FLASH_ATTENTION=0
 
 EXPOSE ${OLLAMA_WEBGUI_PORT} ${OLLAMA_PORT}
 
